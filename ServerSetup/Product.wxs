@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="!(loc.SoftwareName)" Language="!(loc.LANG)" Version="2.3" Manufacturer="!(loc.SoftwareManufacturer)" UpgradeCode="B1C2D3E4-F5A6-4B7C-8D9E-0F1A2B3C4D5E">
+    <Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine" />
+    <Condition Message="!(loc.AdminRightsRequired)">Privileged</Condition>
+    <!-- MajorUpgrade: Configure upgrade behavior -->
+    <!-- Default Schedule="afterInstallInitialize" removes old version before new files are installed -->
+    <!-- Combined with Stop="install" ServiceControl, this ensures old service is stopped before new service is installed -->
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NewerVersionInstalled)" 
+                  AllowSameVersionUpgrades="yes" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="MakeMeAdminServer" Title="[ProductName]" Level="1">
+      <ComponentRef Id="ServerService" />
+      
+      <ComponentRef Id="ProcessCommunicationLibrary" />
+      <ComponentRef Id="ProcessCommunicationLibrary_fr" />
+      
+      <ComponentRef Id="SharedLibrary" />
+      
+      <ComponentRef Id="SettingsLibrary" />
+      
+      <ComponentRef Id="UserListLibrary" />
+      <ComponentRef Id="UserListLibrary_fr" />
+      
+      <ComponentRef Id="LoggingLibrary" />
+      <ComponentRef Id="LoggingLibrary_fr" />
+      
+      <ComponentRef Id="LsaLogonSessionLibrary" />
+    </Feature>
+    
+    <Icon Id="SecurityLock.ico" SourceFile="..\SecurityLock.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="SecurityLock.ico" />
+    <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- Create the structure in the appropriate Program Files folder. -->
+      <?if $(var.Platform) = x64 ?>
+        <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+      <?else ?>
+        <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+      <?endif ?>
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="Make Me Admin Server">
+          <!-- Server Service Executable -->
+          <Component Id="ServerService" Guid="DE98A440-7542-4394-9CAB-086B2906D29A">
+            <File Id="ServerServiceExe" Name="$(var.ServerService.TargetFileName)" Source="$(var.ServerService.TargetPath)" KeyPath="yes" />
+            
+            <!-- Stop existing service before installation (if upgrading) -->
+            <!-- This ensures old service is stopped before new service is installed -->
+            <ServiceControl Id="StopMakeMeAdminServerBeforeInstall" Name="MakeMeAdminServer" Stop="install" Wait="no" />
+            
+            <ServiceInstall DisplayName="Make Me Admin Server Service" Name="MakeMeAdminServer" Start="auto" Type="shareProcess" Vital="yes"
+                            Description="Manages pending administrator rights requests from remote clients."
+                            EraseDescription="no" ErrorControl="normal">
+              <util:ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="restart" ResetPeriodInDays="1" RestartServiceDelayInSeconds="60" />
+            </ServiceInstall>
+            
+            <!-- ServiceControl: Stop service before uninstall, but don't wait indefinitely -->
+            <!-- Wait="no" prevents installer from hanging if service takes too long to stop -->
+            <!-- The service will be forcefully removed during uninstall even if stop fails -->
+            <ServiceControl Id="MakeMeAdminServer" Name="MakeMeAdminServer" Remove="uninstall" Start="install" Stop="both" Wait="no" />
+            <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+          </Component>
+          
+          <!-- Dependencies -->
+          <Directory Id="fr_Localization" Name="fr">
+            <Component Id="ProcessCommunicationLibrary_fr" Guid="F795FC35-86B6-4F70-813B-6EF17B520170">
+              <File Id="ProcessCommunicationLibraryResources_fr" Name="$(var.ProcessCommunication.TargetName).resources.dll" Source="$(var.ProcessCommunication.TargetDir)fr\$(var.ProcessCommunication.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            <Component Id="UserListLibrary_fr" Guid="1BE88596-718B-4C7D-81FF-B0509B6443F6">
+              <File Id="UserListLibraryResources_fr" Name="$(var.UserList.TargetName).resources.dll" Source="$(var.UserList.TargetDir)fr\$(var.UserList.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            <Component Id="LoggingLibrary_fr" Guid="0A40D5F6-4C3A-4015-8240-14C628440726">
+              <File Id="LoggingResources_fr" Name="$(var.Logging.TargetName).resources.dll" Source="$(var.Logging.TargetDir)fr\$(var.Logging.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+          </Directory>
+          
+          <Component Id="ProcessCommunicationLibrary" Guid="79FC2590-F4CD-4205-8283-3E604052224D">
+            <File Id="ProcessCommunicationDll" Name="$(var.ProcessCommunication.TargetFileName)" Source="$(var.ProcessCommunication.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="SharedLibrary" Guid="CE00450C-CC5A-47A8-AB6A-0E564E3AC0BD">
+            <File Id="SharedDll" Name="$(var.Shared.TargetFileName)" Source="$(var.Shared.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="SettingsLibrary" Guid="DFF604F6-F91A-4C6C-8582-91D698EAD179">
+            <File Id="SettingsDll" Name="$(var.Settings.TargetFileName)" Source="$(var.Settings.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="UserListLibrary" Guid="1255D767-16A2-4E90-98EF-A79BDEE38A57">
+            <File Id="UserListDll" Name="$(var.UserList.TargetFileName)" Source="$(var.UserList.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="LoggingLibrary" Guid="17760ABA-01B0-4E35-9AD8-3F168B171CCE">
+            <File Id="LoggingDll" Name="$(var.Logging.TargetFileName)" Source="$(var.Logging.TargetPath)" KeyPath="yes" />
+            <File Id="SyslogNetClientDll" Source="$(var.Logging.TargetDir)\SyslogNet.Client.dll" KeyPath="no" />
+          </Component>
+          
+          <Component Id="LsaLogonSessionLibrary" Guid="22E70C0A-7071-4E1D-B8C1-3E73FB3A1784">
+            <File Id="LsaLogonSessionDll" Name="$(var.LsaLogonSessions.TargetFileName)" Source="$(var.LsaLogonSessions.TargetPath)" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Product>
+</Wix>

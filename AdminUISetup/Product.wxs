@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="!(loc.SoftwareName)" Language="!(loc.LANG)" Version="2.3" Manufacturer="!(loc.SoftwareManufacturer)" UpgradeCode="A1B2C3D4-E5F6-4A7B-8C9D-0E1F2A3B4C5D">
+    <Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine" />
+    <Condition Message="!(loc.AdminRightsRequired)">Privileged</Condition>
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NewerVersionInstalled)" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="AdminUI" Title="[ProductName]" Level="1">
+      <ComponentRef Id="AdminUIApplication" />
+      
+      <ComponentRef Id="ProcessCommunicationLibrary" />
+      <ComponentRef Id="SharedLibrary" />
+      <ComponentRef Id="UserListLibrary" />
+      <ComponentRef Id="SettingsLibrary" />
+      <ComponentRef Id="LoggingLibrary" />
+      <ComponentRef Id="LsaLogonSessionLibrary" />
+    </Feature>
+    
+    <Icon Id="SecurityLock.ico" SourceFile="..\SecurityLock.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="SecurityLock.ico" />
+    <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- Create the structure in the appropriate Program Files folder. -->
+      <?if $(var.Platform) = x64 ?>
+        <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+      <?else ?>
+        <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+      <?endif ?>
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="Make Me Admin AdminUI">
+          <!-- AdminUI Application -->
+          <Component Id="AdminUIApplication" Guid="F1A2B3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5C">
+            <File Id="AdminUIExe" Name="$(var.AdminUI.TargetFileName)" Source="$(var.AdminUI.TargetPath)" KeyPath="yes" />
+            <Shortcut Id="AdminUIShortcut" Directory="ProgramMenuFolder" Name="Make Me Admin AdminUI" Description="!(loc.AdminUIDescription)" Advertise="yes" WorkingDirectory="INSTALLDIR" Icon="SecurityLock.ico" IconIndex="0" />
+            <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+          </Component>
+          
+          <!-- Dependencies -->
+          <Component Id="ProcessCommunicationLibrary" Guid="A2B3C4D5-E6F7-4A8B-9C0D-1E2F3A4B5C6D">
+            <File Id="ProcessCommunicationDll" Name="$(var.ProcessCommunication.TargetFileName)" Source="$(var.ProcessCommunication.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="SharedLibrary" Guid="B3C4D5E6-F7A8-4B9C-0D1E-2F3A4B5C6D7E">
+            <File Id="SharedDll" Name="$(var.Shared.TargetFileName)" Source="$(var.Shared.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="UserListLibrary" Guid="C4D5E6F7-A8B9-4C0D-1E2F-3A4B5C6D7E8F">
+            <File Id="UserListDll" Name="$(var.UserList.TargetFileName)" Source="$(var.UserList.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="SettingsLibrary" Guid="D5E6F7A8-B9C0-4D1E-2F3A-4B5C6D7E8F9A">
+            <File Id="SettingsDll" Name="$(var.Settings.TargetFileName)" Source="$(var.Settings.TargetPath)" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="LoggingLibrary" Guid="E6F7A8B9-C0D1-4E2F-3A4B-5C6D7E8F9A0B">
+            <File Id="LoggingDll" Name="$(var.Logging.TargetFileName)" Source="$(var.Logging.TargetPath)" KeyPath="yes" />
+            <File Id="SyslogNetClientDll" Source="$(var.Logging.TargetDir)\SyslogNet.Client.dll" KeyPath="no" />
+          </Component>
+          
+          <Component Id="LsaLogonSessionLibrary" Guid="F7A8B9C0-D1E2-4F3A-4B5C-6D7E8F9A0B1C">
+            <File Id="LsaLogonSessionDll" Name="$(var.LsaLogonSessions.TargetFileName)" Source="$(var.LsaLogonSessions.TargetPath)" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder" Name="Programs" />
+    </Directory>
+  </Product>
+</Wix>

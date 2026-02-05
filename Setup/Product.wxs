@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="!(loc.SoftwareName)" Language="!(loc.LANG)" Version="2.3" Manufacturer="!(loc.SoftwareManufacturer)" UpgradeCode="9c690479-3987-48a8-8bda-118ef1f93cdd">
+    <Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine" />
+    <Condition Message="!(loc.AdminRightsRequired)">Privileged</Condition>
+    <!-- MajorUpgrade: Configure upgrade behavior -->
+    <!-- Default Schedule="afterInstallInitialize" removes old version before new files are installed -->
+    <!-- Combined with Stop="install" ServiceControl, this ensures old service is stopped before new service is installed -->
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NewerVersionInstalled)" 
+                  AllowSameVersionUpgrades="yes" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="MakeMeAdmin" Title="[ProductName]" Level="1">
+      <ComponentRef Id="ADMXFiles" />
+      <ComponentRef Id="ADMLFiles" />
+
+      <ComponentRef Id="ElevationUserInterface" />
+      <ComponentRef Id="ElevationUserInterface_fr" />
+
+      <ComponentRef Id="LsaLogonSessionLibrary" />
+
+      <ComponentRef Id="ClientService" />
+      <!-- <ComponentRef Id="ClientService_fr" /> -->
+
+      <ComponentRef Id="SharedLibrary" />
+      <!-- <ComponentRef Id="SharedLibrary_fr" /> -->
+
+      <ComponentRef Id="LoggingLibrary" />
+      <ComponentRef Id="LoggingLibrary_fr" />
+
+      <ComponentRef Id="SettingsLibrary" />
+      
+      <ComponentRef Id="UserListLibrary" />
+      <ComponentRef Id="UserListLibrary_fr" />
+
+      <ComponentRef Id="ProcessCommunicationLibrary" />
+      <ComponentRef Id="ProcessCommunicationLibrary_fr" />
+      
+      <Condition Level="0">INSTALLMAKEMEADMIN = "0"</Condition>
+    </Feature>
+    
+    <!-- Note: RemoteUI (AdminUI) is now packaged separately in AdminUISetup -->
+    <!-- This feature has been removed as part of the architecture optimization -->
+    <!--
+    <Feature Id="MakeMeAdminRemote" Title="[ProductName] !(loc.Remote)" Level="0">
+      <ComponentRef Id="RemoteElevationUserInterface"/>
+      <ComponentRef Id="RemoteElevation_fr"/>
+      
+      <ComponentRef Id="MruListLibrary"/>
+
+      <ComponentRef Id="SharedLibrary" />
+      <ComponentRef Id="SharedLibrary_fr" />
+
+      <ComponentRef Id="LoggingLibrary" />
+      <ComponentRef Id="LoggingLibrary_fr" />
+      
+      <ComponentRef Id="SettingsLibrary" />
+
+      <ComponentRef Id="ProcessCommunicationLibrary" />
+      <ComponentRef Id="ProcessCommunicationLibrary_fr" />
+      
+      <Condition Level="1">(INSTALLREMOTE = "1") OR REMOVE</Condition>
+    </Feature>
+    -->
+    
+    <Icon Id="SecurityLock.ico" SourceFile="..\SecurityLock.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="SecurityLock.ico" />
+    <Property Id="ARPNOMODIFY" Value="yes" Secure="yes" />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <!-- Create the structure in the appropriate Program Files folder. -->
+      <?if $(var.Platform) = x64 ?>
+        <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+      <?else ?>
+        <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+      <?endif ?>
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+          <Directory Id="INSTALLFOLDER" Name="Make Me Admin">
+            <Directory Id="fr_Localization" Name="fr">
+              <!-- Note: RemoteUI (AdminUI) French resources removed - AdminUI is packaged separately -->
+              <!--
+              <Component Id="RemoteElevation_fr" Guid="1152E967-8A78-4684-A401-0CBDFC47D34F">
+                <File Id="RemoteElevationResources_fr" Name="$(var.RemoteUI.TargetName).resources.dll" Source="$(var.RemoteUI.TargetDir)fr\$(var.RemoteUI.TargetName).resources.dll" KeyPath="no" />
+              </Component>
+              -->
+            <Component Id="LoggingLibrary_fr" Guid="0A40D5F6-4C3A-4015-8240-14C628440726">
+              <File Id="LoggingResources_fr" Name="$(var.Logging.TargetName).resources.dll" Source="$(var.Logging.TargetDir)fr\$(var.Logging.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            <!--
+            <Component Id="SharedLibrary_fr" Guid="ECEAA942-0BFB-47DB-8D97-7C4B7AC5FF4F">
+              <File Id="SharedLibraryResources_fr" Name="$(var.Shared.TargetName).resources.dll" Source="$(var.Shared.TargetDir)fr\$(var.Shared.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            -->
+            <Component Id="UserListLibrary_fr" Guid="1BE88596-718B-4C7D-81FF-B0509B6443F6">
+              <File Id="UserListLibraryResources_fr" Name="$(var.UserList.TargetName).resources.dll" Source="$(var.UserList.TargetDir)fr\$(var.UserList.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            <!-- Note: ClientService does not have French resources yet, but keeping component for future compatibility -->
+            <!-- <Component Id="ClientService_fr" Guid="98EABA24-D4D4-4D96-B417-946F4648F682">
+              <File Id="ClientServiceResources_fr" Name="$(var.ClientService.TargetName).resources.dll" Source="$(var.ClientService.TargetDir)fr\$(var.ClientService.TargetName).resources.dll" KeyPath="no" />
+            </Component> -->
+            <Component Id="ProcessCommunicationLibrary_fr" Guid="F795FC35-86B6-4F70-813B-6EF17B520170">
+              <File Id="ProcessCommunicationLibraryResources_fr" Name="$(var.ProcessCommunication.TargetName).resources.dll" Source="$(var.ProcessCommunication.TargetDir)fr\$(var.ProcessCommunication.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+            <Component Id="ElevationUserInterface_fr" Guid="6E2DC9BE-B61A-4703-B529-DD5943D5A078">
+              <File Id="ElevationUserInterfaceResources_fr" Name="$(var.LocalUI.TargetName).resources.dll" Source="$(var.LocalUI.TargetDir)fr\$(var.LocalUI.TargetName).resources.dll" KeyPath="no" />
+            </Component>
+          </Directory>
+          <Component Id="ElevationUserInterface" Guid="562B228B-6029-457D-96C9-6B4BCA69660D">
+            <File Id="ElevationUserInterfaceExe" Name="$(var.LocalUI.TargetFileName)" Source="$(var.LocalUI.TargetPath)" KeyPath="yes" />
+            <Shortcut Id="LocalUserInferfaceShortcut" Directory="ProgramMenuFolder" Name="Make Me Admin" Description="Make Me Admin Local User Interface" Advertise="yes" WorkingDirectory="INSTALLDIR" Icon="SecurityLock.ico" IconIndex="0" />
+          </Component>
+          <!-- Note: RemoteUI (AdminUI) components removed - AdminUI is packaged separately in AdminUISetup -->
+          <!--
+          <Component Id="RemoteElevationUserInterface" Guid="E62C25C4-A0E8-45B4-8313-6954A8C2F6F9">
+            <File Id="RemoteElevationUserInterfaceExe" Name="$(var.RemoteUI.TargetFileName)" Source="$(var.RemoteUI.TargetPath)" KeyPath="yes" />
+            <Shortcut Id="RemoteUserInferfaceShortcut" Directory="ProgramMenuFolder" Name="Make Me Admin Remote" Description="Make Me Admin Remote User Interface" Advertise="yes" WorkingDirectory="INSTALLDIR" Icon="SecurityLock.ico" IconIndex="0" />
+          </Component>
+          <Component Id="MruListLibrary" Guid="291425FC-1060-4197-9950-D2DC5CFD3F6B">
+            <File Id="MruLibrary" Name="MruList.dll" Source="$(var.RemoteUI.TargetDir)\MruList.dll" KeyPath="yes" />
+          </Component>
+          -->
+          <Component Id="SharedLibrary" Guid="CE00450C-CC5A-47A8-AB6A-0E564E3AC0BD">
+            <File Id="SharedDll" Name="$(var.Shared.TargetFileName)" Source="$(var.Shared.TargetPath)" KeyPath="yes" />
+          </Component>
+          <Component Id="SettingsLibrary" Guid="DFF604F6-F91A-4C6C-8582-91D698EAD179">
+            <File Id="SettingsDll" Name="$(var.Settings.TargetFileName)" Source="$(var.Settings.TargetPath)" KeyPath="yes" />
+          </Component>
+          <Component Id="UserListLibrary" Guid="1255D767-16A2-4E90-98EF-A79BDEE38A57">
+            <File Id="UserListDll" Name="$(var.UserList.TargetFileName)" Source="$(var.UserList.TargetPath)" KeyPath="yes" />
+          </Component>
+          <Component Id="LoggingLibrary" Guid="17760ABA-01B0-4E35-9AD8-3F168B171CCE">
+            <File Id="LoggingDll" Name="$(var.Logging.TargetFileName)" Source="$(var.Logging.TargetPath)" KeyPath="yes" />
+            <File Id="SyslogNetClientDll"  Source="$(var.Logging.TargetDir)\SyslogNet.Client.dll" KeyPath="no" />
+          </Component>
+          <Component Id="LsaLogonSessionLibrary" Guid="22E70C0A-7071-4E1D-B8C1-3E73FB3A1784">
+            <File Id="LsaLogonSessionDll" Name="$(var.LsaLogonSessions.TargetFileName)" Source="$(var.LsaLogonSessions.TargetPath)" KeyPath="yes" />
+          </Component>
+          <Component Id="ProcessCommunicationLibrary" Guid="79FC2590-F4CD-4205-8283-3E604052224D" >
+            <File Id="ProcessCommunicationDll" Name="$(var.ProcessCommunication.TargetFileName)" Source="$(var.ProcessCommunication.TargetPath)" KeyPath="yes" />
+          </Component>
+          <Component Id="ClientService" Guid="DE98A440-7542-4394-9CAB-086B2906D29A">
+            <File Id="ClientServiceExe" Name="$(var.ClientService.TargetFileName)" Source="$(var.ClientService.TargetPath)" KeyPath="yes" />
+            
+            <!-- Stop existing service before installation (if upgrading) -->
+            <!-- This ensures old service is stopped before new service is installed -->
+            <ServiceControl Id="StopMakeMeAdminClientBeforeInstall" Name="MakeMeAdminClient" Stop="install" Wait="no" />
+            
+            <ServiceInstall DisplayName="Make Me Admin Client Service" Name="MakeMeAdminClient" Start="auto" Type="shareProcess" Vital="yes"
+                            Description="Enables users to elevate themselves to administrator-level rights on the local computer."
+                            EraseDescription="no" ErrorControl="normal">
+
+              <util:ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="restart" ResetPeriodInDays="1" RestartServiceDelayInSeconds="60" />
+            </ServiceInstall>
+            <!-- ServiceControl: Stop service before uninstall, but don't wait indefinitely -->
+            <!-- Wait="no" prevents installer from hanging if service takes too long to stop -->
+            <!-- The service will be forcefully removed during uninstall even if stop fails -->
+            <ServiceControl Id="MakeMeAdminClient" Name="MakeMeAdminClient" Remove="uninstall" Start="install" Stop="both" Wait="no" />
+            <RemoveRegistryKey Action="removeOnUninstall" Id="AddedSIDsValue" Key="Software\Sinclair Community College\Make Me Admin" Root="HKLM" />
+            <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+          </Component>
+            
+          <Directory Id="GroupPolicyFolder" Name="Group Policy">
+            <Component Id="ADMXFiles" Guid="7DBE019F-9512-43DE-BB62-B6C3B83A90ED">
+              <File Id="SinclairBase.admx" Source="GroupPolicy\SinclairBase.admx" KeyPath="yes" />
+              <File Id="SinclairMakeMeAdmin.admx" Source="GroupPolicy\SinclairMakeMeAdmin.admx" />
+            </Component>
+            <Directory Id="GroupPolicyEnUSFolder" Name="en-US">
+              <Component Id="ADMLFiles" Guid="D8D53E30-35CA-497E-8251-026E53AE74FE" KeyPath="yes">
+                <File Id="SinclairBase.adml" Source="GroupPolicy\en-US\SinclairBase.adml" />
+                <File Id="SinclairMakeMeAdmin.adml" Source="GroupPolicy\en-US\SinclairMakeMeAdmin.adml" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder" Name="Programs" />
+    </Directory>
+  </Product>
+</Wix>
