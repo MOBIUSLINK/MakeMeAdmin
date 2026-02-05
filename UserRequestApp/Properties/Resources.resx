@@ -121,7 +121,7 @@
     <value>就绪。</value>
   </data>
   <data name="ApplicationName" xml:space="preserve">
-    <value>Make Me Admin</value>
+    <value>Make Me Admin Managed</value>
   </data>
   <data name="CheckingAdminStatus" xml:space="preserve">
     <value>正在检查管理员状态...</value>
@@ -149,7 +149,7 @@
     <value>您已经拥有管理员权限。</value>
   </data>
   <data name="UIMessageEnsureServiceRunning" xml:space="preserve">
-    <value>请确保 Make Me Admin 服务正在运行。</value>
+    <value>请确保 Make Me Admin Managed 服务正在运行。</value>
   </data>
   <data name="UIMessageErrorWhileAdding" xml:space="preserve">
     <value>将您添加到管理员组时发生错误。</value>

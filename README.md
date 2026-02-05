@@ -1,9 +1,9 @@
-# Make Me Admin (MG)
+# Make Me Admin Managed
 
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)](https://www.microsoft.com/windows)
 
-**Make Me Admin (MG)** 是一个基于 .NET 开发的 Windows 权限管理系统，旨在为企业或组织提供一种安全、可控且便捷的方式，让普通用户在需要时段内临时获取管理员权限。
+**Make Me Admin Managed** 是一个基于 .NET 开发的 Windows 权限管理系统，旨在为企业或组织提供一种安全、可控且便捷的方式，让普通用户在需要时段内临时获取管理员权限。
 
 本项目是对原始 Make Me Admin 系统的功能增强与升级版，引入了集中化审批机制、实时通知、深色模式支持以及更强大的诊断工具。
 
@@ -66,7 +66,8 @@
 
 ## 📸 预览
 
-*(在此处可以运行 `generate_image` 生成界面预览图，或由用户手动替换)*
+<img width="730" height="711" alt="image" src="https://github.com/user-attachments/assets/5c4dd79c-9594-48fc-bad0-d86b38dafeda" />
+<img width="1377" height="768" alt="image" src="https://github.com/user-attachments/assets/e4725907-e3f9-4e20-b2ec-811dedeabdb2" />
 
 ---
 

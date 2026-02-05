@@ -61,7 +61,7 @@ namespace SinclairCC.MakeMeAdmin
             // serviceInstaller
             // 
             this.serviceInstaller.Description = "Manages pending administrator rights requests from remote clients.";
-            this.serviceInstaller.DisplayName = "Make Me Admin Server Service";
+            this.serviceInstaller.DisplayName = "Make Me Admin Managed Server Service";
             this.serviceInstaller.ServiceName = "MakeMeAdminServer";
             this.serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             this.serviceInstaller.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.serviceInstaller_AfterInstall);

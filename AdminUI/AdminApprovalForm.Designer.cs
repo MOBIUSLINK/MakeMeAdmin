@@ -330,7 +330,7 @@ namespace SinclairCC.MakeMeAdmin
             this.MinimizeBox = false;
             this.Name = "AdminApprovalForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Make Me Admin - 审批管理";
+            this.Text = "Make Me Admin Managed - 审批管理";
             this.actionPanel.ResumeLayout(false);
             this.actionPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutNumericUpDown)).EndInit();
