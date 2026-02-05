@@ -67,6 +67,8 @@
 ## 📸 预览
 
 *<img width="730" height="711" alt="image" src="https://github.com/user-attachments/assets/5c4dd79c-9594-48fc-bad0-d86b38dafeda" />
+<img width="1377" height="768" alt="image" src="https://github.com/user-attachments/assets/e4725907-e3f9-4e20-b2ec-811dedeabdb2" />
+
 *
 
 ---
