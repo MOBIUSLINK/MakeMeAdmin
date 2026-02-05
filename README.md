@@ -66,7 +66,8 @@
 
 ## 📸 预览
 
-*(在此处可以运行 `generate_image` 生成界面预览图，或由用户手动替换)*
+*<img width="730" height="711" alt="image" src="https://github.com/user-attachments/assets/5c4dd79c-9594-48fc-bad0-d86b38dafeda" />
+*
 
 ---
 
